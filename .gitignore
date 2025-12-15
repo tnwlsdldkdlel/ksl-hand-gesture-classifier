@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# 모델 파일
+*.h5
+*.pb
+*.tflite
+*.onnx
+
+# 데이터 파일
+data/*.npz
+data/*.npy
+data/*.csv
+
+# TF.js 변환물
+public/model/*.json
+public/model/*.bin
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 로그
+*.log
+logs/
+
+# Jupyter
+.ipynb_checkpoints/
+
