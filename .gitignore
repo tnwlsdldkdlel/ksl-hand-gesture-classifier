@@ -20,9 +20,9 @@ data/*.npz
 data/*.npy
 data/*.csv
 
-# TF.js 변환물
-public/model/*.json
-public/model/*.bin
+# TF.js 변환물 (주석 처리 - 변환된 모델은 커밋함)
+# public/model/*.json
+# public/model/*.bin
 
 # IDE
 .vscode/
