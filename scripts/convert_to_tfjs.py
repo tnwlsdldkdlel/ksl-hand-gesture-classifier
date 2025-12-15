@@ -52,11 +52,12 @@ def convert_model(model_path, output_dir):
     print("이 작업은 몇 분 걸릴 수 있습니다...")
     
     # TF.js로 변환 (모델 객체를 직접 전달)
-    tfjs.converters.save_keras_model(
-        model,
-        output_dir,
-        quantization_dtype=None  # 양자화 없이 변환
-    )
+    try:
+        # 최신 API 시도
+        tfjs.converters.save_keras_model(model, output_dir)
+    except TypeError:
+        # 구버전 API 사용
+        tfjs.converters.save_keras_model(model, output_dir, quantization_dtype=None)
     
     print(f"\n변환 완료!")
     print(f"출력 디렉토리: {output_dir}")
