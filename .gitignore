@@ -20,9 +20,10 @@ data/*.npz
 data/*.npy
 data/*.csv
 
-# TF.js 변환물 (주석 처리 - 변환된 모델은 커밋함)
+# TF.js 변환물 - 변환된 모델은 커밋함
 # public/model/*.json
 # public/model/*.bin
+# 위 주석은 정보용이며, 실제로는 public/model/ 디렉토리의 파일들은 커밋합니다
 
 # IDE
 .vscode/
