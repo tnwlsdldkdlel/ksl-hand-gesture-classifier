@@ -48,10 +48,12 @@ def verify_weights_match_layers(model_json_path):
         manifest = data['weightsManifest'][0]
         weight_layer_names = set()
         for weight in manifest['weights']:
-            # sequential/dense_1/kernel -> dense_1
+            # dense_1/kernel -> dense_1 또는 sequential/dense_1/kernel -> dense_1
             parts = weight['name'].split('/')
             if len(parts) >= 2:
-                weight_layer_names.add(parts[1])
+                # sequential/ prefix가 있으면 두 번째, 없으면 첫 번째가 레이어 이름
+                layer_name = parts[1] if parts[0] == 'sequential' else parts[0]
+                weight_layer_names.add(layer_name)
         
         # 일치 확인
         if layer_names != weight_layer_names:
@@ -66,6 +68,36 @@ def verify_weights_match_layers(model_json_path):
             return True
     except Exception as e:
         print(f"  ⚠️  가중치 검증 중 오류: {e}")
+        return False
+
+
+def remove_sequential_prefix(model_json_path):
+    """가중치 이름에서 sequential/ prefix 제거"""
+    try:
+        with open(model_json_path, 'r') as f:
+            data = json.load(f)
+        
+        modified = False
+        manifest = data.get('weightsManifest', [])
+        
+        if manifest:
+            weights = manifest[0].get('weights', [])
+            for weight in weights:
+                old_name = weight.get('name', '')
+                if old_name.startswith('sequential/'):
+                    new_name = old_name.replace('sequential/', '', 1)
+                    weight['name'] = new_name
+                    modified = True
+                    print(f"  가중치 이름 수정: {old_name} -> {new_name}")
+        
+        if modified:
+            with open(model_json_path, 'w') as f:
+                json.dump(data, f, indent=None, separators=(',', ':'))
+            print("  ✅ 가중치 이름에서 sequential/ prefix 제거 완료")
+        
+        return modified
+    except Exception as e:
+        print(f"  ⚠️  가중치 이름 수정 중 오류: {e}")
         return False
 
 
@@ -174,6 +206,9 @@ def convert_model(model_path, output_dir):
         print("\nTF.js 호환성 검사 중...")
         fix_inputlayer_in_model_json(model_json_path)
         
+        # 가중치 이름에서 sequential/ prefix 제거
+        remove_sequential_prefix(model_json_path)
+        
         # 가중치와 레이어 이름 일치 확인
         verify_weights_match_layers(model_json_path)
         
@@ -198,4 +233,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
